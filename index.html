@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>open pls</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: linear-gradient(135deg, #ffd9e6 0%, #ffe9f0 50%, #f6e0ff 100%);
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+.card {
+  background: rgba(255,255,255,.94);
+  border-radius: 24px;
+  padding: 36px 26px;
+  width: min(88vw, 380px);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(214, 51, 108, .18);
+  position: relative;
+  z-index: 2;
+}
+.avatar { font-size: 64px; margin-bottom: 12px; }
+h1 { color: #a4264d; font-size: 24px; line-height: 1.4; margin-bottom: 28px; font-weight: 600; }
+.sub { color: #8a4a63; font-size: 15px; margin: -16px 0 24px; }
+.btns { display: flex; gap: 16px; justify-content: center; }
+button { font-family: inherit; border: none; cursor: pointer; }
+.yes {
+  background: #f7437d; color: #fff; font-size: 16px;
+  padding: 14px 34px; border-radius: 999px; font-weight: 600;
+  box-shadow: 0 6px 18px rgba(247,67,125,.4);
+  transition: transform .15s;
+}
+.yes:active { transform: scale(.95); }
+.no {
+  background: #b07ae0; color: #fff; font-size: 15px;
+  padding: 13px 26px; border-radius: 999px;
+  transition: left .25s ease, top .25s ease, transform .2s;
+  z-index: 5;
+}
+.hidden { display: none !important; }
+.final { color: #8a4a63; font-size: 17px; margin-top: 20px; }
+.confetti { position: fixed; top: -10px; z-index: 1; pointer-events: none; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+</style>
+</head>
+<body>
+  <div class="card" id="s1">
+    <div class="avatar">🐶</div>
+    <h1>🌸 Today we will do only 3 classes 🌸</h1>
+    <div class="btns">
+      <button class="yes" id="yesBtn">YES ♥</button>
+      <button class="no" id="noBtn">no 🐾</button>
+    </div>
+  </div>
+  <div class="card hidden" id="s2">
+    <div class="avatar">🧽</div>
+    <h1 style="font-size:22px;">WAIT YOU ACTUALLY SAID YES?? 😭</h1>
+    <p class="sub">I was so ready for you to say no 🥹</p>
+    <button class="yes" id="okBtn">okay okay! →</button>
+    <p class="final hidden" id="finalLine">it's a deal then 🤝</p>
+  </div>
+<script>
+var noBtn = document.getElementById('noBtn');
+var s1 = document.getElementById('s1');
+var s2 = document.getElementById('s2');
+var dodges = 0;
+var taunts = ['no 🐾','nope','nahi 🙅','try again 😌','catch me!','bas kar 😭'];
+
+function dodge(e){
+  if(e){ e.preventDefault(); }
+  dodges++;
+  var pad = 12;
+  var w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+  var maxX = Math.max(window.innerWidth - w - pad*2, 1);
+  var maxY = Math.max(window.innerHeight - h - pad*2, 1);
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = (pad + Math.random()*maxX) + 'px';
+  noBtn.style.top  = (pad + Math.random()*maxY) + 'px';
+  noBtn.style.transform = 'scale(' + Math.max(0.55, 1 - dodges*0.06) + ')';
+  noBtn.textContent = taunts[Math.min(Math.floor(dodges/2), taunts.length-1)];
+}
+noBtn.addEventListener('touchstart', dodge, {passive:false});
+noBtn.addEventListener('mouseenter', dodge);
+noBtn.addEventListener('click', dodge);
+
+function confetti(n){
+  var colors = ['#f7437d','#ffd166','#7ae0b0','#b07ae0','#7ab8e0'];
+  for(var i=0;i<n;i++){
+    var c = document.createElement('div');
+    c.className = 'confetti';
+    var s = 6 + Math.random()*8;
+    c.style.cssText = 'left:' + (Math.random()*100) + 'vw;width:'+s+'px;height:'+s+'px;background:'+colors[i%5]+';animation-duration:'+(2+Math.random()*2)+'s;animation-delay:'+(Math.random()*0.6)+'s;border-radius:'+(Math.random()>0.5?'50%':'2px');
+    document.body.appendChild(c);
+    setTimeout(function(el){ return function(){ el.remove(); }; }(c), 5000);
+  }
+}
+document.getElementById('yesBtn').addEventListener('click', function(){
+  s1.classList.add('hidden');
+  s2.classList.remove('hidden');
+  confetti(90);
+});
+document.getElementById('okBtn').addEventListener('click', function(){
+  this.classList.add('hidden');
+  document.getElementById('finalLine').classList.remove('hidden');
+  confetti(40);
+});
+</script>
+</body>
+</html>
